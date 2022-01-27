@@ -13,7 +13,7 @@ I make the ouput look like `iptables -nvL`
     sudo apt install nft-stats
 
 ### Manually
-    You can just clone the project, it's a one-script (`nft-stats.py` project)
+You can just clone the project, it's a one-script (`nft-stats.py`) project. But you will have not auto-update.
 
 ### Example
 #### Without nft-stats
