@@ -1,0 +1,10 @@
+Package: nft-stats
+Version: VERSION-TO-REPLACE
+Section: net
+Priority: optional
+Architecture: all
+Maintainer: Azlux <github@azlux.fr>
+Description: Get the nftables counters easier to read 
+Homepage: https://github.com/azlux/nft-stats
+Bugs: https://github.com/azlux/nft-stats/issues
+Depends: nftables, python3
