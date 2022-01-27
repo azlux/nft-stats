@@ -62,7 +62,7 @@ table ip6 filter {
                 iif "lo" accept
                 icmpv6 type { destination-unreachable, packet-too-big, time-exceeded, parameter-problem, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-solicit, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert, ind-neighbor-solicit, ind-neighbor-advert, mld2-listener-report } accept comment "Accept ICMPv6"
                 iif "eth0" ip6 saddr @ip6_source_users tcp dport { 22, 80, 443 } counter packets 0 bytes 0 accept
-                counter packets 0 bytes 0 drop
+                counter packets 4 bytes 321 drop
         }
 }
 table inet filter {
@@ -85,26 +85,26 @@ root@AZLUX-PC:~# nft-stats
 
 OUTPUT IP (policy ACCEPT)
 pkts       bytes      action
-8240       396.13K    ACCEPT  oif "eth0" ip daddr @routeur_preprod tcp dport 179
+8240       396.13K    ACCEPT  oif "eth0" ip daddr @router tcp dport 179
 0          0          DROP    oif "eth0" tcp dport 179
 
 INPUT IP (policy ACCEPT)
 pkts       bytes      action
 -          -          ACCEPT  oif "eth0" tcp dport 179
 -          -          ACCEPT  oif "eth0" tcp dport 179
-2310       135.35K    ACCEPT  iif "eth0" ip saddr @ip_source_utilisateurs tcp dport  22, 80, 443
-8659       439.32K    DROP    counter packets 8659 bytes 449863 drop
+2310       135.35K    ACCEPT  iif "eth0" ip saddr @ip_source_users tcp dport  22, 80, 443
+8659       439.32K    DROP    
 
 INPUT IP6 (policy ACCEPT)
 pkts       bytes      action
 -          -          ACCEPT  ct state established accept
 -          -          ACCEPT  iif "lo" accept
 -          -          ACCEPT  icmpv6 type  destination-unreachable, packet-too-big, time-exceeded, parameter-problem, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-solicit, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert, ind-neighbor-solicit, ind-neighbor-advert, mld2-listener-report  accept comment "Accept ICMPv6"
-0          0          ACCEPT  iif "eth0" ip6 saddr @ip6_source_utilisateurs tcp dport  22, 80, 443
-4          321        DROP    counter packets 0 bytes 0 drop
+0          0          ACCEPT  iif "eth0" ip6 saddr @ip6_source_users tcp dport  22, 80, 443
+4          321        DROP    
 
 FORWARD INET (policy DROP)
 pkts       bytes      action
-0          0          DROP    counter packets 0 bytes 0 drop
+0          0          DROP    
 ```
 </details>
