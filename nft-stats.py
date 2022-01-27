@@ -16,7 +16,10 @@ def tabulator(text, min_field=10):
 
 
 def convert_size(size_bytes, one_k=1024, minimal=0):
-    size = int(size_bytes)
+    try:
+        size = int(size_bytes)
+    except ValueError:
+        return size_bytes
     if size == 0:
         return "0"
     if size < minimal:
@@ -24,7 +27,8 @@ def convert_size(size_bytes, one_k=1024, minimal=0):
     tp_i = int(math.floor(math.log(size, one_k)))
     tp_p = math.pow(1024, tp_i)
     tp_s = round(size / tp_p, 2)
-    return f"{tp_s}{size_name[tp_i]}"
+    tp_s = str(tp_s)
+    return f"{tp_s.rstrip('0').rstrip('.') if '.' in tp_s else tp_s}{size_name[tp_i]}"
 
 
 def main():
@@ -52,12 +56,17 @@ def main():
                 counter_hit = "-"
                 counter_bytes = "-"
                 action = ""
+                match = None
                 if 'counter packets' in line:
                     res = re.search(re_counter, line)
                     counter_hit = convert_size(res.group(1), one_k=1000, minimal=500000)
                     counter_bytes = convert_size(res.group(2))
-
-                    match = line.split('counter packets')[0]
+                    
+                    match_slit = line.split('counter packets')
+                    if len(match_slit)>1:
+                        match = match_slit[0]
+                    else:
+                        match = ""
                 if 'accept' in line:
                     action = "ACCEPT"
                 elif 'reject' in line:
@@ -65,7 +74,7 @@ def main():
                 elif 'drop' in line:
                     action = "DROP"
 
-                print(f"{tabulator(counter_hit)} {tabulator(counter_bytes)} {tabulator(action, 7)} {match if match else line}")
+                print(f"{tabulator(counter_hit)} {tabulator(counter_bytes)} {tabulator(action, 7)} {match if match!=None else line}")
 
 
 if __name__ == '__main__':
