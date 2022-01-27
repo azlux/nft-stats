@@ -20,6 +20,7 @@ I make the ouput look like `iptables -nvL`
 command : `nft list ruleset`
 <details>
   <summary>Click to expand!</summary>
+
 ```
 root@AZLUX-PC:~# nft list ruleset
 table ip filter {
@@ -78,6 +79,7 @@ table inet filter {
 command : `nft-stats`
 <details>
   <summary>Click to expand!</summary>
+
 ```
 root@AZLUX-PC:~# nft-stats
 
