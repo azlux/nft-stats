@@ -25,8 +25,8 @@ nft-stats
 ### Manually
 You can just clone the project, it's a one-script (`nft-stats.py`) project. But you will have not auto-update.
 
-### Example
-#### Without nft-stats
+## Example
+### Without nft-stats
 command : `nft list ruleset`
 <details>
   <summary>Click to expand!</summary>
@@ -85,7 +85,7 @@ table inet filter {
 ```
 </details>
 
-#### With nft-stats
+### With nft-stats
 command : `nft-stats`
 <details>
   <summary>Click to expand!</summary>
