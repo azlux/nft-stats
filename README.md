@@ -5,6 +5,16 @@ It kind of hard to read the output of `nft list ruleset` so there is a small pro
 
 I make the ouput look like `iptables -nvL`
 
+## Usage
+
+```
+nft-stats
+```
+
+## TODO
+- Color
+- Counter when nft named counters into the config
+
 ## Install
 ### With APT (recommended)
     echo "deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bullseye main" | sudo tee /etc/apt/sources.list.d/azlux.list
