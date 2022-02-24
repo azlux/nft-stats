@@ -3,8 +3,8 @@ import math
 import os
 import re
 import subprocess
+import argparse
 
-command = "nft list ruleset"
 re_counter = r'counter packets (\d+) bytes (\d+)'
 size_name = ("", "K", "M", "G", "T")
 
@@ -31,24 +31,39 @@ def convert_size(size_bytes, one_k=1024, minimal=0):
     return f"{tp_s.rstrip('0').rstrip('.') if '.' in tp_s else tp_s}{size_name[tp_i]}"
 
 
-def main():
+def run_command(args):
+    command = "nft list ruleset"
+    if args.table:
+        command = f"nft list table {args.table}"
+    if args.chain:
+        command = f"nft list chain filter {args.chain}"
+    if args.debug:
+        print(f"## Command used : {command}")
     nft_run = subprocess.run(command, shell=True, capture_output=True)
     res = nft_run.stdout.decode().split('\n')
+    if args.debug:
+        print("## OUTPUT :")
+        print(res)
+    return res
+
+
+def nft_stats(command_result):
     table = ""
     chain = ""
-    for line in res:
+    table_first_line_printed = False
+    for line in command_result:
         line = line.replace('{', '')
         line = line.replace('}', '')
         line = line.replace(';', '')
         line = line.strip()
         if line.startswith('table'):
-            table = line.split()[1].upper()
+            table = f"{line.split()[1].upper()} {line.split()[2].upper()}"
         elif line.startswith('chain'):
             chain = line.split()[1].upper()
         elif line.startswith('type') and 'policy' in line:
             policy = line.split('policy')[1].strip().upper()
             print(f"\n{chain} {table} (policy {policy})")
-            print(f"{tabulator('pkts')} {tabulator('bytes')} {tabulator('action', 7)}")
+            table_first_line_printed = False
         elif line.startswith('set'):
             chain = ""
         else:
@@ -78,6 +93,16 @@ def main():
                   table_first_line_printed = True
                 print(f"{tabulator(counter_hit)} {tabulator(counter_bytes)} {tabulator(action, 7)} {match if match!=None else line}")
 
+
+def main():
+    parser = argparse.ArgumentParser(description='Show well formated statitics for NFT output')
+    parser.add_argument('--chain', '-c', type=str, required=False, help="Show specific Chain")
+    parser.add_argument('--table', '-t', type=str, required=False, help="Show specific Table")
+    parser.add_argument('--debug', '-d', action="store_true", help="Debug mode")
+    args = parser.parse_args()
+
+    out = run_command(args)
+    nft_stats(out)
 
 
 if __name__ == '__main__':
