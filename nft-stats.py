@@ -61,7 +61,7 @@ def main():
                     res = re.search(re_counter, line)
                     counter_hit = convert_size(res.group(1), one_k=1000, minimal=500000)
                     counter_bytes = convert_size(res.group(2))
-                    
+
                     match_slit = line.split('counter packets')
                     if len(match_slit)>1:
                         match = match_slit[0]
@@ -73,8 +73,11 @@ def main():
                     action = "REJECT"
                 elif 'drop' in line:
                     action = "DROP"
-
+                if not table_first_line_printed:
+                  print(f"{tabulator('pkts')} {tabulator('bytes')} {tabulator('action', 7)}")
+                  table_first_line_printed = True
                 print(f"{tabulator(counter_hit)} {tabulator(counter_bytes)} {tabulator(action, 7)} {match if match!=None else line}")
+
 
 
 if __name__ == '__main__':
