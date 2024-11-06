@@ -47,23 +47,32 @@ def run_command(args):
     return res
 
 
+def clear_line(line):
+    line = line.replace('{', '')
+    line = line.replace('}', '')
+    line = line.replace(';', '')
+    line = line.strip()
+    return line
+
 def nft_stats(command_result):
     table = ""
     chain = ""
     table_first_line_printed = False
-    for line in command_result:
-        line = line.replace('{', '')
-        line = line.replace('}', '')
-        line = line.replace(';', '')
-        line = line.strip()
+    iter_res = iter(command_result)
+    for line in iter_res:
+        line = clear_line(line)
         if line.startswith('table'):
             table = f"{line.split()[1].upper()} {line.split()[2].upper()}"
         elif line.startswith('chain'):
-            chain = line.split()[1].upper()
-        elif line.startswith('type') and 'policy' in line:
-            policy = line.split('policy')[1].strip().upper()
-            print(f"\n{chain} {table} (policy {policy})")
-            table_first_line_printed = False
+            chain = line.split()[1]
+            next_line = clear_line(next(iter_res));
+            if next_line.startswith('type') and 'policy' in next_line:
+                policy = next_line.split('policy')[1].strip().upper()
+                print(f"\nchain {chain.upper()} {table} (policy {policy})")
+                table_first_line_printed = False
+            else:
+                print(f"\nchain {chain}")
+                table_first_line_printed = False
         elif line.startswith('set'):
             chain = ""
         else:
@@ -72,16 +81,12 @@ def nft_stats(command_result):
                 counter_bytes = "-"
                 action = ""
                 match = None
-                if 'counter packets' in line:
-                    res = re.search(re_counter, line)
+                res = re.search(re_counter, line)
+                if res:
                     counter_hit = convert_size(res.group(1), one_k=1000, minimal=500000)
                     counter_bytes = convert_size(res.group(2))
+                    match = re.sub(re_counter, '', line)
 
-                    match_slit = line.split('counter packets')
-                    if len(match_slit)>1:
-                        match = match_slit[0]
-                    else:
-                        match = ""
                 if 'accept' in line:
                     action = "ACCEPT"
                 elif 'reject' in line:
